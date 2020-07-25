@@ -4,7 +4,7 @@ Telegram bot that informs his dudes that it is Wednesday
 Written in C# .NET Core using the Telegram.Bot API (https://github.com/TelegramBots/telegram.bot).
 Should therefore also work with Linux.
 
-When run and supplied with a bot token, users can subscribe to the bot using the ´/start` command.
+When run and supplied with a bot token, users can subscribe to the bot using the `/start` command.
 They will then receive a message every time it turns Wednesday, informing them about the fact that
 it is in fact Wednesday.
 
