@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <StartupObject>BotTest.Program</StartupObject>
+    <AssemblyName>WednesdayBotCore</AssemblyName>
+    <RootNamespace>WednesdayBotCore</RootNamespace>
+    <FileUpgradeFlags>40</FileUpgradeFlags>
+    <UpgradeBackupLocation>C:\Users\matth\source\repos\WednesdayBotTest\Backup\</UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Telegram.Bot" Version="14.11.0" />
+  </ItemGroup>
+</Project>
