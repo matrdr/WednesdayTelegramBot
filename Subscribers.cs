@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Telegram.Bot
 {
@@ -14,22 +15,22 @@ namespace Telegram.Bot
         /// Fügt einen neuen Subscriber hinzu
         /// </summary>
         /// <param name="chatId">Chat ID des hinzuzufügenden chats</param>
-        public static void AddSubscriber(Telegram.Bot.Types.ChatId chatId)
+        public static async Task AddSubscriber(Types.ChatId chatId)
         {
-            chatIDs.Add(chatId);
+            ChatIDs.Add(chatId);
 
-            new Thread(new ThreadStart(WriteSubscribersToFile)).Start();
+            await WriteSubscribersToFile();
         }
 
         /// <summary>
         /// Entfernt einen Subscriber von der Liste
         /// </summary>
         /// <param name="chatId">Chat ID des zu entfernenden Chats</param>
-        public static void RemoveSubscriber(Telegram.Bot.Types.ChatId chatId)
+        public static async Task RemoveSubscriber(Types.ChatId chatId)
         {
-            chatIDs.Remove(chatId);
+            ChatIDs.Remove(chatId);
 
-            new Thread(new ThreadStart(WriteSubscribersToFile)).Start();
+            await WriteSubscribersToFile();
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace Telegram.Bot
         /// </summary>
         public static void PrintSubscribers()
         {
-            foreach (var chatId in chatIDs)
+            foreach (var chatId in ChatIDs)
             {
                 Console.WriteLine(chatId);
             }
@@ -46,13 +47,13 @@ namespace Telegram.Bot
         /// <summary>
         /// Schreibt alle aktuellen Abonnenten in eine Datei
         /// </summary>
-        private static void WriteSubscribersToFile()
+        private static async Task WriteSubscribersToFile()
         {
             StreamWriter sw = new StreamWriter("subscribers.txt");
 
-            foreach (var chatId in chatIDs)
+            foreach (var chatId in ChatIDs)
             {
-                sw.WriteLine(chatId);
+                await sw.WriteLineAsync(chatId);
             }
 
             sw.Close();
@@ -63,8 +64,7 @@ namespace Telegram.Bot
         /// </summary>
         public static void ReadSubscribersFromFile()
         {
-            StreamReader sr = null;
-
+            StreamReader sr;
             try
             {
                 sr = new StreamReader("subscribers.txt");
@@ -78,35 +78,34 @@ namespace Telegram.Bot
                 sr = new StreamReader("subscribers.txt");
             }
 
-            string line = "";
-
+            string line;
             while ((line = sr.ReadLine()) != null)
             {
-                chatIDs.Add(long.Parse(line));
+                ChatIDs.Add(long.Parse(line));
             }
 
             sr.Close();
         }
 
-        public static void RemoveAll()
+        public static async Task RemoveAll()
         {
-            chatIDs.Clear();
+            ChatIDs.Clear();
 
-            WriteSubscribersToFile();
+            await WriteSubscribersToFile();
         }
 
         /// <summary>
         /// Enthält die ChatID jedes Abonennten ein Mal
         /// </summary>
-        public static SortedSet<Telegram.Bot.Types.ChatId> chatIDs { get; } = new SortedSet<Telegram.Bot.Types.ChatId>(new ChatIdComparer());
+        public static SortedSet<Types.ChatId> ChatIDs { get; } = new SortedSet<Types.ChatId>(new ChatIdComparer());
     }
 
     /// <summary>
     /// Vergleich zweier ChatIDs
     /// </summary>
-    class ChatIdComparer : IComparer<Telegram.Bot.Types.ChatId>
+    class ChatIdComparer : IComparer<Types.ChatId>
     {
-        public int Compare(Telegram.Bot.Types.ChatId x, Telegram.Bot.Types.ChatId y)
+        public int Compare(Types.ChatId x, Types.ChatId y)
         {
             return x.Identifier.CompareTo(y.Identifier);
         }

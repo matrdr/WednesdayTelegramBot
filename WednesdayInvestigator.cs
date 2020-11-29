@@ -1,28 +1,47 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace BotTest
 {
     class WednesdayInvestigator
     {
-        const DayOfWeek DayOfInterest = DayOfWeek.Wednesday;
+        private const DayOfWeek DayOfInterest = DayOfWeek.Wednesday;
 
         /// <summary>
-        /// Startet einen Thread, welcher auf jeden Wenesday das ItIsWednesdayEvent auslöst
+        /// Startet einen Thread, welcher auf jeden Wenesday das
+        /// ItIsWednesdayEvent auslöst
         /// </summary>
-        /// <returns>Gibt Referenz auf den gestarteten Thread zurück, damit dieser vom Nutzer beendet werden kann</returns>
-        public static Thread BeginInvestigation()
+        public void BeginInvestigation()
         {
-            Thread wit = new Thread(new ThreadStart(WednesdayInvestigationThread));
-            wit.Start();
+            if (wednesdayInvestigationTask == null)
+            {
+                tokenSource = new CancellationTokenSource();
+                token = tokenSource.Token;
+                wednesdayInvestigationTask =
+                    Task.Run(WednesdayInvestigationThread, token);
+            }
+        }
 
-            return wit;
+        /// <summary>
+        /// Stoppt den internen Wednesday-Investigations-Thread. Kehrt zurück,
+        /// sobald der Thread terminiert ist.
+        /// </summary>
+        public void EndInvestigation()
+        {
+            tokenSource.Cancel();
+            wednesdayInvestigationTask.Wait();
+            tokenSource.Dispose();
+            wednesdayInvestigationTask = null;
         }
 
         /// <summary>
         /// Berechnet die Zeitdauer bis zum nächsten Wednesday
         /// </summary>
-        /// <returns>Die Zeit bis zum nächsten Wednesday. Ist es bereits Wednesday, so ist die Zeitspanne 0</returns>
+        /// <returns>
+        /// Die Zeit bis zum nächsten Wednesday. Ist es bereits Wednesday, so
+        /// ist die Zeitspanne 0
+        /// </returns>
         public static TimeSpan WhenIsWednesdayMyDude()
         {
             DateTime now = DateTime.Now;
@@ -42,52 +61,71 @@ namespace BotTest
                 if (now.DayOfWeek < DayOfInterest)
                 {
                     // Wochentag ist Sonntag - Dienstag
-                    wednesdayTime = wednesdayTime.AddDays(DayOfInterest - now.DayOfWeek);
+                    wednesdayTime = wednesdayTime
+                        .AddDays(DayOfInterest - now.DayOfWeek);
                 }
                 else
                 {
                     // Wochentag ist Donnerstag - Samstag
-                    wednesdayTime = wednesdayTime.AddDays(DayOfInterest + 7 - now.DayOfWeek);
+                    wednesdayTime = wednesdayTime
+                        .AddDays(DayOfInterest + 7 - now.DayOfWeek);
                 }
 
                 // Sicherstellen, dass Zieldatum wirklich Wednesday ist
-                System.Diagnostics.Debug.Assert(wednesdayTime.DayOfWeek == DayOfInterest, "Date is not a Wednesday :(");
+                System.Diagnostics.Debug.Assert(
+                    wednesdayTime.DayOfWeek == DayOfInterest, 
+                    "Date is not a Wednesday :("
+                );
 
                 // Zeit berechnen, die am Zieldatum bereits seit 0:00 vergangen ist
-                TimeSpan timeIntoWednesday = new TimeSpan(0, wednesdayTime.Hour, wednesdayTime.Minute, wednesdayTime.Second, wednesdayTime.Millisecond);
+                TimeSpan timeIntoWednesday = new TimeSpan(
+                    0, 
+                    wednesdayTime.Hour,
+                    wednesdayTime.Minute,
+                    wednesdayTime.Second,
+                    wednesdayTime.Millisecond
+                );
 
-                // Diese Zeit abziehen, um Mitternacht des gewünschten Wednesday zu erlangen
+                // Diese Zeit abziehen, um Mitternacht des gewünschten Wednesday 
+                // zu erlangen
                 wednesdayTime = wednesdayTime.Subtract(timeIntoWednesday);
 
                 // Die Zeitspanne zwischen jetzt und Wednesday zurückgeben
-                return wednesdayTime - now/* /* Debug-Time *\/ - new TimeSpan(1,57,0) */;
+                return wednesdayTime - now;
             }
         }
 
         /// <summary>
-        /// Löst das ItIsWednesdayEvent aus, wenn Wendesday ist. Schläft anschließend bis zum nächsten Wednesday
+        /// Löst das ItIsWednesdayEvent aus, wenn Wendesday ist.
+        /// Schläft anschließend bis zum nächsten Wednesday.
         /// </summary>
-        private static void WednesdayInvestigationThread()
+        private void WednesdayInvestigationThread()
         {
-            try
+            while (!token.IsCancellationRequested)
             {
-                while (true)
+                token.WaitHandle.WaitOne(WhenIsWednesdayMyDude());
+
+                if (!token.IsCancellationRequested)
                 {
-                    Thread.Sleep(WhenIsWednesdayMyDude());
-                    System.Diagnostics.Debug.Assert(DateTime.Now.DayOfWeek == DayOfInterest, "For some odd reason, it is not Wednesday, my dude!");
+                    System.Diagnostics.Debug.Assert(
+                        DateTime.Now.DayOfWeek == DayOfInterest,
+                        "For some odd reason, it is not Wednesday, my dude!"
+                    );
+
                     Console.WriteLine("IT IS WEDNESDAY, MY DUDE!");
 
                     ItIsWednesdayEvent();
-                    Thread.Sleep(new TimeSpan(1, 0, 0, 0));
+
+                    token.WaitHandle.WaitOne(TimeSpan.FromDays(1.0));
                 }
-            }
-            catch (ThreadInterruptedException tiex)
-            {
-                Console.WriteLine(tiex.Message);
             }
         }
 
         public delegate void ItIsWednesdayHandler();
-        public static event ItIsWednesdayHandler ItIsWednesdayEvent;
+        public event ItIsWednesdayHandler ItIsWednesdayEvent;
+
+        private Task wednesdayInvestigationTask;
+        private CancellationTokenSource tokenSource;
+        private CancellationToken token;
     }
 }
