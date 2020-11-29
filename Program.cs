@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
@@ -14,7 +13,9 @@ namespace BotTest
 
         static void Main()
         {
-            botClient = new TelegramBotClient(/* INSERT YOUR BOT-TOKEN HERE */);
+            botClient = new TelegramBotClient(
+                /* INSERT YOUR BOT-TOKEN HERE */
+            );
             Subscribers.ReadSubscribersFromFile();
 
             var wednesdayInvestigator = new WednesdayInvestigator();
@@ -24,7 +25,8 @@ namespace BotTest
 
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine(
-              $"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
+                $"Hello, World! I am user {me.Id}" +
+                $"and my name is {me.FirstName}."
             );
 
             botClient.OnMessage += Bot_OnMessage;
@@ -60,7 +62,9 @@ namespace BotTest
                         previousSubscriberOperation = Subscribers.RemoveAll();
                         break;
                     case 4U:
-                        Console.WriteLine(WednesdayInvestigator.WhenIsWednesdayMyDude());
+                        Console.WriteLine(
+                            WednesdayInvestigator.WhenIsWednesdayMyDude()
+                        );
                         break;
                 }
 
@@ -85,7 +89,7 @@ namespace BotTest
                     {
                         case "/start":
                             previousSubscriberOperation.Wait();
-                            previousSubscriberOperation = 
+                            previousSubscriberOperation =
                                 Subscribers.AddSubscriber(e.Message.Chat.Id);
                             break;
                         case "/unsubscribe":
@@ -96,7 +100,7 @@ namespace BotTest
                         case "/whensdaymydude":
                             botClient
                                 .SendTextMessageAsync(
-                                    e.Message.Chat, 
+                                    e.Message.Chat,
                                     WednesdayInvestigator
                                         .WhenIsWednesdayMyDude()
                                         .ToString())
@@ -120,7 +124,10 @@ namespace BotTest
             foreach (ChatId id in Subscribers.ChatIDs)
             {
                 sendTasks.Add(
-                    botClient.SendTextMessageAsync(id, "IT IS WEDNESDAY, MY DUDE!")
+                    botClient.SendTextMessageAsync(
+                        id,
+                        "IT IS WEDNESDAY, MY DUDE!"
+                    )
                 );
             }
 

@@ -9,7 +9,7 @@ namespace BotTest
         private const DayOfWeek DayOfInterest = DayOfWeek.Wednesday;
 
         /// <summary>
-        /// Startet einen Thread, welcher auf jeden Wenesday das
+        /// Startet einen Thread, welcher auf jeden Wednesday das
         /// ItIsWednesdayEvent auslöst
         /// </summary>
         public void BeginInvestigation()
@@ -73,20 +73,21 @@ namespace BotTest
 
                 // Sicherstellen, dass Zieldatum wirklich Wednesday ist
                 System.Diagnostics.Debug.Assert(
-                    wednesdayTime.DayOfWeek == DayOfInterest, 
+                    wednesdayTime.DayOfWeek == DayOfInterest,
                     "Date is not a Wednesday :("
                 );
 
-                // Zeit berechnen, die am Zieldatum bereits seit 0:00 vergangen ist
+                // Zeit berechnen, die am Zieldatum bereits seit 0:00 vergangen
+                // ist
                 TimeSpan timeIntoWednesday = new TimeSpan(
-                    0, 
+                    0,
                     wednesdayTime.Hour,
                     wednesdayTime.Minute,
                     wednesdayTime.Second,
                     wednesdayTime.Millisecond
                 );
 
-                // Diese Zeit abziehen, um Mitternacht des gewünschten Wednesday 
+                // Diese Zeit abziehen, um Mitternacht des gewünschten Wednesday
                 // zu erlangen
                 wednesdayTime = wednesdayTime.Subtract(timeIntoWednesday);
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Telegram.Bot
 {
     /// <summary>
-    /// Verantwortlich für das Speichern der Abonenten
+    /// Verantwortlich für das Speichern der Abonnenten
     /// </summary>
     static class Subscribers
     {
