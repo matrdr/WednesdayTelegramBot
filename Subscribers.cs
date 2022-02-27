@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Telegram.Bot
@@ -107,7 +107,8 @@ namespace Telegram.Bot
     {
         public int Compare(Types.ChatId x, Types.ChatId y)
         {
-            return x.Identifier.CompareTo(y.Identifier);
+            Debug.Assert(x.Identifier.HasValue && y.Identifier.HasValue);
+            return x.Identifier.Value.CompareTo(y.Identifier.Value);
         }
     }
 }

@@ -9,12 +9,12 @@ namespace BotTest
 {
     class Program
     {
-        static ITelegramBotClient botClient;
+        static TelegramBotClient botClient;
 
         static void Main()
         {
             botClient = new TelegramBotClient(
-                /* INSERT YOUR BOT-TOKEN HERE */
+                /* INSERT YOUR BOT-TOKEN HERE */"asdf"
             );
             Subscribers.ReadSubscribersFromFile();
 
@@ -30,7 +30,7 @@ namespace BotTest
             );
 
             botClient.OnMessage += Bot_OnMessage;
-            botClient.StartReceiving();
+            botClient.StartReceiving()
 
             // Bot Command Menu
             uint input = 0U;

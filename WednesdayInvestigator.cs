@@ -44,7 +44,7 @@ namespace BotTest
         /// </returns>
         public static TimeSpan WhenIsWednesdayMyDude()
         {
-            DateTime now = DateTime.Now;
+            var now = DateTime.Now;
 
             if (DateTime.Now.DayOfWeek == DayOfInterest)
             {
@@ -55,7 +55,7 @@ namespace BotTest
             {
                 // Es ist nicht Wednesday => Berechne Zeit bis Wednesday
 
-                DateTime wednesdayTime = now;
+                var wednesdayTime = now;
 
                 // Berechnen wie viele Tage es noch bis Wednesday sind
                 if (now.DayOfWeek < DayOfInterest)
@@ -79,7 +79,7 @@ namespace BotTest
 
                 // Zeit berechnen, die am Zieldatum bereits seit 0:00 vergangen
                 // ist
-                TimeSpan timeIntoWednesday = new TimeSpan(
+                var timeIntoWednesday = new TimeSpan(
                     0,
                     wednesdayTime.Hour,
                     wednesdayTime.Minute,
