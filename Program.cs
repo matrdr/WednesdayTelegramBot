@@ -18,7 +18,7 @@ namespace BotTest
 		{
 			botClient = new TelegramBotClient(
 				// TODO: Insert Bot token
-				"INSERT BOT TOKEN HERE"
+				"INSERT BOT TOKEN HERE!"
 			);
 			await Subscribers.ReadSubscribersFromFile();
 
@@ -125,11 +125,7 @@ namespace BotTest
 							Subscribers.RemoveSubscriber(chatId);
 						break;
 					case "/whensdaymydude":
-						await botClient.SendTextMessageAsync(
-							chatId,
-							WednesdayInvestigator
-								.WhenIsWednesdayMyDude()
-								.ToString());
+						await HandleWednesdayRequest(chatId);
 						break;
 				}
 			}
@@ -142,6 +138,26 @@ namespace BotTest
 			}
 		}
 
+		private static async Task HandleWednesdayRequest(long chatId)
+		{
+			var time = WednesdayInvestigator.WhenIsWednesdayMyDude();
+
+			if (time == TimeSpan.Zero)
+			{
+				await botClient.SendTextMessageAsync(
+					chatId, "IT IS WEDNESDAY, MY DUDE!");
+			}
+			else
+			{
+				var message = $"{time:%d} days, {time:%h} hours, " +
+				              $"{time:%m} minutes and {time:%s} seconds";
+
+				await botClient.SendTextMessageAsync(
+					chatId,
+					$"There are still {message} until Wednesday!");
+			}
+		}
+
 		private static Task HandleError(
 			ITelegramBotClient botClient,
 			Exception exception,
@@ -151,7 +167,7 @@ namespace BotTest
 			{
 				ApiRequestException apiRequestException
 					=> $"Telegram API Error:\n" +
-				       $"[{apiRequestException.ErrorCode}]" +
+					   $"[{apiRequestException.ErrorCode}]" +
 					   $"\n{apiRequestException.Message}",
 				_ => exception.ToString()
 			};
