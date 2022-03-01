@@ -17,9 +17,10 @@ namespace BotTest
 		async static Task Main()
 		{
 			botClient = new TelegramBotClient(
+				// TODO: Insert Bot token
 				"INSERT BOT TOKEN HERE"
 			);
-			Subscribers.ReadSubscribersFromFile();
+			await Subscribers.ReadSubscribersFromFile();
 
 			var wednesdayInvestigator = new WednesdayInvestigator();
 
@@ -28,7 +29,7 @@ namespace BotTest
 
 			var me = await botClient.GetMeAsync();
 			Console.WriteLine(
-				$"Hello, World! I am user {me.Id}" +
+				$"Hello, World! I am user {me.Id} " +
 				$"and my name is {me.FirstName}."
 			);
 
